@@ -3,7 +3,7 @@ import { useFonts } from 'expo-font';
 import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker';
 // import { useNavigation } from "@react-navigation/native";
 import * as Animatable from 'react-native-animatable' 
-import { Link } from "expo-router";
+
 
 
 

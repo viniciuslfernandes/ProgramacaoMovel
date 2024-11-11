@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import * as Animatable from 'react-native-animatable';
-
+import { Link } from "expo-router";
 export default function SingIn() {
   return (
     <View style={styles.container}>
@@ -17,11 +17,16 @@ export default function SingIn() {
         <TextInput style={styles.input} placeholder="Digite sua senha" />
 
 
-        <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonRegister}>
-          <Text style={styles.buttonTextRegister}>Não possui uma conta? Cadastre-se</Text>
+        <Link href={"../../(tabs)/home"}>
+          <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
+        </Link>
+
+        <TouchableOpacity style={styles.buttonRegister} >
+          <Link href="../createLogin">
+            <Text style={styles.buttonTextRegister}>Não possui uma conta? Cadastre-se</Text>
+          </Link>
         </TouchableOpacity>
       </Animatable.View>
 
@@ -37,7 +42,7 @@ const styles= StyleSheet.create({
     backgroundColor:'#fff'
   },
   containerHeader:{
-    marginTop: "14%",
+    marginTop: "10%",
     marginBottom: "8%",
     paddingStart: "5%"
   },
