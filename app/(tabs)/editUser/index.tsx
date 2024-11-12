@@ -4,13 +4,18 @@ import { useState } from "react";
 import {  TextInput, Provider as PaperProvider } from 'react-native-paper';
 import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker';
 import { EduVICWANTBeginner_400Regular } from '@expo-google-fonts/edu-vic-wa-nt-beginner';
+import { Avatar } from "react-native-elements";
+import { Picker } from '@react-native-picker/picker';
 
 export default function cadastrarEvent() {
   const [fontsLoaded] = useFonts({
     PermanentMarker_400Regular,
     EduVICWANTBeginner_400Regular
   });
-  const [eventTitle, setEventTitle] = useState('');
+  const [selectedGender, setSelectedGender] = useState('');
+  const [selectedAge, setSelectedAge] = useState('');
+  const ages = Array.from({ length: 100 }, (_, i) => i + 1);
+
   return (
     <ScrollView style={styles.container}>
       <View >
@@ -20,16 +25,51 @@ export default function cadastrarEvent() {
             <Text style={styles.titleBlue}>Events</Text>
           </Text>
         </View>
-        <View style={styles.containerMesseger}>
-          <Text style={styles.messegerText}>Cadastre seu evento</Text>
+        <View style={styles.containerAvatar}>
+            <Avatar
+                size="large"
+                rounded
+                title="R"
+                onPress={() => console.log("Works!")}
+                activeOpacity={0.7}
+                containerStyle={{ backgroundColor: '#1E90FF' }}
+                titleStyle={{ color: 'white' }}
+            />
         </View>
       </View>
 
       <View style={styles.containerForm}>
-        <TextInput label="Nome do Evento" mode="flat" style={styles.input} />
+      
+        <Text style={styles.subTitle}>Dados Pessoais:</Text>
+       
+        <TextInput label="Nome completo" mode="flat" style={styles.input} />
+        <TextInput label="Email" mode="flat" style={styles.input} />
         
-        <View>
-          {/* data e hora */}
+
+        <View style={styles.formRow}>
+            <Picker
+                selectedValue={selectedGender}
+                onValueChange={(itemValue) => setSelectedGender(itemValue)}
+                style={styles.picker}
+            >
+                <Picker.Item label="Gênero" value="" />
+                <Picker.Item label="Masculino" value="masculino" />
+                <Picker.Item label="Feminino" value="feminino" />
+            </Picker>
+            <Picker
+                selectedValue={selectedAge}
+                onValueChange={(itemValue) => setSelectedAge(itemValue)}
+                style={styles.picker}
+            >
+            <Picker.Item label="Idade" value="" />
+                {ages.map((age) => (
+                    <Picker.Item key={age} label={`${age} anos`} value={age} />
+                ))}
+            </Picker>
+        </View>
+
+        <View style={{marginTop:"4%"}}>
+            <Text style={styles.subTitle}>Endereço:</Text>
         </View>
         
         <View style={styles.formRow}>
@@ -59,10 +99,9 @@ export default function cadastrarEvent() {
           </View>
         </View>
         <TextInput label="Complemento" mode="flat" style={styles.input} />
-        <TextInput label="Descrição do evento" mode="flat" style={styles.input} />
         <View style={styles.containerButton}>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Criar</Text>
+            <Text style={styles.buttonText}>Editar Perfil</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -76,6 +115,20 @@ const styles = StyleSheet.create({
   container:{
     flex:1,
     backgroundColor:'#fff',
+  },
+  picker: { 
+    fontSize: 15,
+    width:"45%",
+    borderBottomWidth: 1, 
+    borderColor:"white",
+    borderBottomColor: 'grey', 
+    color: 'grey', 
+    paddingVertical: 10,
+  },
+  subTitle:{
+    fontSize: 22,
+    fontWeight:"bold",
+    marginBottom:"1%"
   },
   header:{
     marginTop: "6%",
@@ -94,13 +147,10 @@ const styles = StyleSheet.create({
     fontFamily: "PermanentMarker_400Regular",
     fontSize: 40,
   },
-  containerMesseger:{
+  containerAvatar:{
     marginBottom: "2%",
     justifyContent:"center",
     alignItems:"center",
-  },
-  messegerText:{
-    fontSize: 20
   },
   containerForm:{
     flex: 1,
