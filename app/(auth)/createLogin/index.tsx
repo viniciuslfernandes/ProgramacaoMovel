@@ -3,8 +3,42 @@ import { PermanentMarker_400Regular } from "@expo-google-fonts/permanent-marker"
 import { EduVICWANTBeginner_400Regular } from "@expo-google-fonts/edu-vic-wa-nt-beginner";
 import * as Animatable from 'react-native-animatable';
 import { useFonts } from 'expo-font';
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import axios from 'axios';
+import { useState } from "react";
+import { useAuth } from "@/auth/authProvider";
+
 export default function CreateLogin() {
+
+  // const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nameUser, setNameUser] = useState("");
+  const [userCep, setUserCep] = useState('');
+  const [userCidade, setUserCidade] = useState('');
+  const [userEstado, setUserEstado] = useState('');
+  const [userNumero, setUserNumero] = useState('');
+  const [userRua, setUserRua] = useState('');
+  const [userBairro, setUserBairro] = useState('');
+  const [userIdade, setUserIdade] = useState(0)
+  const [userGenero, setUserGenero] = useState("")
+  const {signUp} = useAuth();
+  
+  const Cadastrar = async()=>{
+    var jsonBody = {
+      email: email, 
+      password: password, 
+      nameUser: nameUser,
+    };
+    console.log(jsonBody);
+    try{
+      await signUp(email, password, nameUser);
+      router.replace('/(tabs)/home')
+    }catch(error){
+      console.error('Error:', error);
+    }
+  }
+  
   const [fontsLoaded] = useFonts({
     PermanentMarker_400Regular,
     EduVICWANTBeginner_400Regular
@@ -26,21 +60,21 @@ export default function CreateLogin() {
       </Animatable.View>
           
       <Animatable.View animation={"fadeInUp"} style={styles.containerForm}>
-        <Text style={styles.titleForm}>Nome</Text>
-        <TextInput style={styles.input} placeholder="Digite seu nome..." />
+        <Text style={styles.titleForm}>Nome Completo</Text>
+        <TextInput style={styles.input} onChangeText={setNameUser} placeholder="Digite seu nome..." placeholderTextColor="#fff" />
 
         <Text style={styles.titleForm}>Email</Text>
-        <TextInput style={styles.input} placeholder="Digite seu email..." />
+        <TextInput style={styles.input} onChangeText={setEmail} placeholder="Digite seu email..." placeholderTextColor="#fff" />
 
         <Text style={styles.titleForm}>Senha</Text>
-        <TextInput style={styles.input} placeholder="Digite sua senha" />
+        <TextInput style={styles.input} onChangeText={setPassword} placeholder="Digite sua senha" placeholderTextColor="#fff"/>
 
 
-        <Link href={"../../(tabs)/home"}>
-          <TouchableOpacity style={styles.button}>
+        {/* <Link href={"../../(tabs)/home"}> */}
+          <TouchableOpacity onPress={Cadastrar} style={styles.button}>
               <Text style={styles.buttonText}>Cadastrar</Text>
           </TouchableOpacity>
-        </Link>
+        {/* </Link> */}
 
         <TouchableOpacity style={styles.buttonRegister} >
           <Link href="../singIn">
@@ -48,11 +82,7 @@ export default function CreateLogin() {
           </Link>
         </TouchableOpacity>
       </Animatable.View>
-
-      
     </View>
-
-  
   );
 }
 const styles= StyleSheet.create({
@@ -61,8 +91,8 @@ const styles= StyleSheet.create({
     backgroundColor:'#fff'
   },
   containerHeader:{
-    marginTop: "3%",
-    marginBottom: "3%",
+    marginTop: "10%",
+    marginBottom: "15%",
     paddingStart: "5%"
   },
   containerLinha:{

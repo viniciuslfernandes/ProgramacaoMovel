@@ -1,29 +1,62 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from '@rneui/base';
 import { Dimensions } from 'react-native';
 import ModalEvent from '../modalEvent';
 import { Avatar } from "react-native-elements";
 import { Image } from 'react-native';
+import { useAuth } from '@/auth/authProvider';
+import axios from 'axios';
+
 
 interface CardsComponentsProps {
+    id: string
+    email_user: string;
     title: string;
-    hours: string;
-    date: string;
+    time: string;
+    event_date: string;
     imageLink: string;
     description: string;
-    locale: {
-        rua: string;
-        numero: string,
-        bairro: string,
-        cidade: string,
-        cep: string,
-        referencia:string
-    },
+    rua: string;
+    numero: string,
+    bairro: string,
+    cidade: string,
+    cep: string,
+    referencia:string
 };
+
 const { height } = Dimensions.get('window');
-const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ title, hours, date, imageLink, locale, description}) => {
-    
+const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_user, title, time, event_date, imageLink, rua, numero, bairro, cidade, cep, referencia, description}) => {
+
+    const { userEmail } = useAuth();
+    const [edit, setEdit]= React.useState(false);
+
+    React.useEffect(() => {
+        if (userEmail === email_user) {
+            setEdit(true);
+        } else {
+            setEdit(false);
+        }
+    }, [userEmail, email_user]);
+
+    const formatedTime=(time:string)=>{
+        const [hours, minutes] = time.split(':');
+        return  `${hours}:${minutes} hrs`;
+    }
+    const dateFormatada = new Intl.DateTimeFormat('pt-BR').format(new Date(event_date))
+    const timeFormatada = formatedTime(time)
+
+    const Excluir = async(id: string)=>{
+        try{
+            const response = await axios.delete("http://192.168.3.5:3000/events", {
+                data: { id }
+            });
+        }
+        catch(error){
+            console.error('Error:', error);
+        }
+    }
+
   return (
     <View style={styles.container}>
         <Card>
@@ -41,7 +74,8 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ title, hour
                     <Text style={styles.textTitle}>{title}</Text>
                 </View>
                 <View>
-                    <Text>{date}</Text>
+                    <Text>{dateFormatada}</Text>
+                    <Text>às {timeFormatada}</Text>
                 </View>
             </View>
             
@@ -63,13 +97,17 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ title, hour
                 <Text style={{fontWeight:"bold"}}>Endereço: </Text>
 
                 <Text style={{ marginBottom: 10 }}>
-                {locale.rua}, {locale.numero}, {locale.bairro}, {locale.cidade}.
+                {rua}, {numero}, {bairro}, {cidade}.
                 </Text>
             </Text>
-
+            {edit? 
+                <View style={styles.containerButton}>
+                    <TouchableOpacity onPress={()=>Excluir(id)} style={styles.button}>
+                        <Text style={styles.buttonText}>Excluir</Text>
+                    </TouchableOpacity>
+                </View>
+            :<></>}
             
-            {/* <ModalEvent title={title} hours={hours} date={date} imageLink={imageLink} description={description} locale={locale}/> */}
-
         </Card>
     </View>
   );
@@ -102,6 +140,26 @@ const styles = StyleSheet.create({
         marginBottom: "1%",   
         borderColor: "grey",
         borderWidth: 1
+    },
+    containerButton:{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: "3%"
+    },
+    button:{
+        backgroundColor: "red",
+        width:"40%",
+        borderRadius: 4,
+        paddingVertical: 8,
+        marginTop: 14,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    buttonText:{
+        fontSize: 16,
+        color: "#FFF",
+        fontWeight: "bold"
     },
 });
 

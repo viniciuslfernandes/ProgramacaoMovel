@@ -1,11 +1,10 @@
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useFonts } from 'expo-font';
-import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker';
+import { PermanentMarker_400Regular } from "@expo-google-fonts/permanent-marker"; 
 // import { useNavigation } from "@react-navigation/native";
 import * as Animatable from 'react-native-animatable' 
-
-
-
+import { Link } from 'expo-router';
+import { Pressable } from "react-native";
 
 export default function Initial() {
   const [fontsLoaded] = useFonts({
@@ -23,10 +22,11 @@ export default function Initial() {
       <Animatable.View animation="fadeInUp"  duration={2000} delay={500} style={styles.containerForm}>
         <Text style={styles.title}>Encontre os melhores eventos e construa mémorias.</Text>
         <Text style={styles.text}>Faça login para começar</Text>
-        
-          <TouchableOpacity  style={styles.button} href="singIn">
-              <Text style={styles.buttonText}>Acessar</Text>
-          </TouchableOpacity>
+          <Link href="/singIn" asChild>
+            <TouchableOpacity  style={styles.button}>
+                <Text style={styles.buttonText}>Acessar</Text>
+            </TouchableOpacity>
+          </Link>
       </Animatable.View>
 
     </View>
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
   textEvent:{
     color: '#1E90FF',
     fontFamily: "PermanentMarker_400Regular",
-    fontSize: 40, 
-    fontWeight:'bold',
+    fontSize: 40,
+    // fontWeight:'bold',
   },
   containerForm:{
     flex:1,

@@ -4,48 +4,54 @@ import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker'
 import { EduVICWANTBeginner_400Regular } from '@expo-google-fonts/edu-vic-wa-nt-beginner';
 import SearchBarComp from "@/components/searchBar";
 import CardEvent from "@/components/cardEvent";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/auth/authProvider";
+
+interface Event {
+  id: string,
+  title: string;
+  event_date: string;
+  time: string;
+  // imageLink: string;
+  description: string;
+  rua: string;
+  numero: string;
+  bairro: string;
+  cidade: string;
+  cep: string;
+  referencia: string;
+  email_user: string;
+}
 
 export default function Home() {
   const [fontsLoaded] = useFonts({
     PermanentMarker_400Regular,
     EduVICWANTBeginner_400Regular
   });
+ 
+  const [events, setEvents] = useState<Event[]>([]);
+  useEffect(()=>{
+    const fetchData = async()=>{
+      try{
+        const response = await axios.get('http://192.168.3.5:3000/events');
+        const dados = response.data;
+        // console.log(response.data)
+        let vet: Event[] = [];
+        Object.keys(dados).forEach(e =>{
+          vet.push(dados[e])
+        })
+        setEvents(vet);
+        
+      }catch (error) {
+        console.error("Erro ao buscar os eventos:", error);
+      }
+    };
+    fetchData();
+  }, [])
+  // console.log(events[0].date)
 
-  const events = [
-    {
-      title: "Festa Universitária",
-      date: "16 de Setembro de 2017",
-      hours: "20:00 AM",
-      imageLink: "https://th.bing.com/th/id/R.06db452fc12c1c27687799e8759bae75?rik=i2PMHbxsCyA2lw&riu=http%3a%2f%2fwww.aplausoeventos.com.br%2fwp-content%2fuploads%2f2019%2f11%2fevento77.jpg&ehk=FLkra0g1%2f91qxuDneGbfuXNUasTuWpk9whM5HybAUcw%3d&risl=&pid=ImgRaw&r=0",
-      description: "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.",
-      locale: {
-          rua: 'Rua Ficticia',
-          numero: '123',
-          bairro: 'Bairro Inventado',
-          cidade: 'Leopoldina',
-          cep: '36772258',
-          referencia:'Sem referência'
-      },
-      key: "0"
-    },
-    {
-      title: "Música ao vivo",
-      date: "16 de Setembro de 2017",
-      hours: "20:00 AM",
-      imageLink: "https://th.bing.com/th/id/R.06db452fc12c1c27687799e8759bae75?rik=i2PMHbxsCyA2lw&riu=http%3a%2f%2fwww.aplausoeventos.com.br%2fwp-content%2fuploads%2f2019%2f11%2fevento77.jpg&ehk=FLkra0g1%2f91qxuDneGbfuXNUasTuWpk9whM5HybAUcw%3d&risl=&pid=ImgRaw&r=0",
-      description: "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.",
-      locale: {
-          rua: 'Rua Imaginaria',
-          numero: '789',
-          bairro: 'Bairro Inventado',
-          cidade: 'Leopoldina',
-          cep: '36772258',
-          referencia:'Sem referência'
-      },
-      key: "1"
-    },
-  ]
-
+  let imageLink = "https://th.bing.com/th/id/R.06db452fc12c1c27687799e8759bae75?rik=i2PMHbxsCyA2lw&riu=http%3a%2f%2fwww.aplausoeventos.com.br%2fwp-content%2fuploads%2f2019%2f11%2fevento77.jpg&ehk=FLkra0g1%2f91qxuDneGbfuXNUasTuWpk9whM5HybAUcw%3d&risl=&pid=ImgRaw&r=0"
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -61,8 +67,24 @@ export default function Home() {
         <SearchBarComp/>
 
         <View>
-          {events.map((event) =>(
-            <CardEvent key={event.key} title={event.title} hours={event.hours} date={event.date} imageLink={event.imageLink} description={event.description} locale={event.locale}/>
+          {events.map((event, key) =>(
+            <CardEvent 
+            key={key}
+            id={event.id}
+            email_user={event.email_user} 
+            title={event.title} 
+            time={event.time} 
+            event_date={event.event_date} 
+            imageLink={imageLink} 
+            description={event.description} 
+            rua={event.rua} 
+            numero={event.numero}
+            bairro={event.bairro}
+            cidade={event.cidade}
+            cep={event.cep}
+            referencia={event.referencia}
+            />
+
           ))}
         </View>
         <View style={{marginBottom: "2%"}}></View>

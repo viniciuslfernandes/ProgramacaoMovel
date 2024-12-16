@@ -1,20 +1,82 @@
 import { Text, View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { useFonts } from 'expo-font';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {  TextInput, Provider as PaperProvider } from 'react-native-paper';
 import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker';
 import { EduVICWANTBeginner_400Regular } from '@expo-google-fonts/edu-vic-wa-nt-beginner';
 import { Avatar } from "react-native-elements";
 import { Picker } from '@react-native-picker/picker';
+import axios from "axios";
+import { useAuth } from "@/auth/authProvider";
+
 
 export default function cadastrarEvent() {
   const [fontsLoaded] = useFonts({
     PermanentMarker_400Regular,
     EduVICWANTBeginner_400Regular
   });
-  const [selectedGender, setSelectedGender] = useState('');
-  const [selectedAge, setSelectedAge] = useState('');
+  
   const ages = Array.from({ length: 100 }, (_, i) => i + 1);
+  
+  const [userGenero, setUserGenero] = useState('');
+  const [userIdade, setUserIdade] = useState('');
+
+  const[userName, setUserName] = useState("");
+  const [userCep, setUserCep] = useState('');
+  const [userCidade, setUserCidade] = useState('');
+  const [userEstado, setUserEstado] = useState('');
+  const [userNumero, setUserNumero] = useState('');
+  const [userRua, setUserRua] = useState('');
+  const [userBairro, setUserBairro] = useState('');
+
+  const { userEmail } = useAuth();
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://192.168.3.5:3000/usuariosInformacoes", {
+          params: {
+            email: userEmail
+          }
+        });
+        setUserName(response.data.name_user)
+        setUserCep(response.data.cep)
+        setUserCidade(response.data.cidade)
+        setUserEstado(response.data.estado)
+        setUserNumero(response.data.numero)
+        setUserRua(response.data.rua)
+        setUserBairro(response.data.bairro)
+        // console.log(response.data)
+        
+      } catch (err) {
+        // setError('Erro ao fazer requisição');
+      } finally {
+        // setLoading(false);
+      }
+    };
+    fetchData();
+  }, [userEmail]);
+
+  const Editar = async()=>{
+    var jsonBody = {
+      email: userEmail,
+      name_user: userName,
+      cep: userCep,
+      genero: userGenero,
+      idade: userIdade,
+      cidade: userCidade,
+      estado: userEstado,
+      numero: userNumero,
+      rua: userRua,
+      bairro: userBairro
+    }    
+    try{
+      const response = await axios.put("http://192.168.3.5:3000/usuarios", jsonBody) 
+    }catch(error){
+      console.error('Error:', error);
+    }
+  }
+
 
   return (
     <ScrollView style={styles.container}>
@@ -41,15 +103,14 @@ export default function cadastrarEvent() {
       <View style={styles.containerForm}>
       
         <Text style={styles.subTitle}>Dados Pessoais:</Text>
-       
-        <TextInput label="Nome completo" mode="flat" style={styles.input} />
-        <TextInput label="Email" mode="flat" style={styles.input} />
+        <TextInput label="Nome completo" value={userName} onChangeText={setUserName} mode="flat" style={styles.input}/>
+        <TextInput label="Email" value={userEmail ?? ""} mode="flat" style={styles.input} />
         
 
         <View style={styles.formRow}>
             <Picker
-                selectedValue={selectedGender}
-                onValueChange={(itemValue) => setSelectedGender(itemValue)}
+                selectedValue={userGenero}
+                onValueChange={(itemValue) => setUserGenero(itemValue)}
                 style={styles.picker}
             >
                 <Picker.Item label="Gênero" value="" />
@@ -57,13 +118,13 @@ export default function cadastrarEvent() {
                 <Picker.Item label="Feminino" value="feminino" />
             </Picker>
             <Picker
-                selectedValue={selectedAge}
-                onValueChange={(itemValue) => setSelectedAge(itemValue)}
+                selectedValue={userIdade}
+                onValueChange={(itemValue) => setUserIdade(itemValue)}
                 style={styles.picker}
             >
             <Picker.Item label="Idade" value="" />
                 {ages.map((age) => (
-                    <Picker.Item key={age} label={`${age} anos`} value={age} />
+                    <Picker.Item key={age} label={`${age}`} value={age} />
                 ))}
             </Picker>
         </View>
@@ -74,33 +135,33 @@ export default function cadastrarEvent() {
         
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="CEP" mode="flat" style={styles.input} />
+            <TextInput label="CEP" mode="flat" value={userCep} style={styles.input}  onChangeText={setUserCep}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Cidade" mode="flat" style={styles.input} /> 
+          <TextInput label="Cidade" mode="flat" value={userCidade} style={styles.input} onChangeText={setUserCidade}/> 
           </View>
         </View>
 
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="Estado" mode="flat" style={styles.input} />
+            <TextInput label="Estado" mode="flat" value={userEstado} style={styles.input} onChangeText={setUserEstado}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Número" mode="flat" style={styles.input} /> 
+          <TextInput label="Número" mode="flat" value={userNumero} style={styles.input} onChangeText={setUserNumero} /> 
           </View>
         </View>
 
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="Rua" mode="flat" style={styles.input} />
+            <TextInput label="Rua" mode="flat" value={userRua} style={styles.input} onChangeText={setUserRua}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Bairro" mode="flat" style={styles.input} /> 
+          <TextInput label="Bairro" mode="flat" value={userBairro} style={styles.input} onChangeText={setUserBairro}/> 
           </View>
         </View>
-        <TextInput label="Complemento" mode="flat" style={styles.input} />
+        {/* <TextInput label="Complemento" mode="flat" style={styles.input} /> */}
         <View style={styles.containerButton}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity onPress={Editar} style={styles.button}>
             <Text style={styles.buttonText}>Editar Perfil</Text>
           </TouchableOpacity>
         </View>

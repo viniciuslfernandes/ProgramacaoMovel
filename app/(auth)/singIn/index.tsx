@@ -1,39 +1,58 @@
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import * as Animatable from 'react-native-animatable';
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import axios from "axios";
+import { useState } from "react";
+import React from "react";
+import { useAuth } from "@/auth/authProvider";
+
 export default function SingIn() {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [incorretLogin, setIncorretLogin] = React.useState(false);
+  const { signIn, isLoading } = useAuth();
+  
+  const Logar = async()=>{
+    var jsonBody = {email: email, password: password};
+    console.log(jsonBody);
+    try{
+      await signIn(email, password);
+      router.replace('/(tabs)/home')
+      
+    }catch(error){
+      setIncorretLogin(true);
+      console.error('Error:', error);
+    }
+  }
   return (
     <View style={styles.container}>
       <Animatable.View animation={"fadeInLeft"} delay={500} style={styles.containerHeader}>
         <Text style={styles.message}> Bem-vindo(a) </Text>
       </Animatable.View>
     
-    
       <Animatable.View animation={"fadeInUp"} style={styles.containerForm}>
         <Text style={styles.titleForm}>Email</Text>
-        <TextInput style={styles.input} placeholder="Digite seu email..." />
+        <TextInput style={styles.input} onChangeText={setEmail} placeholder="Digite seu email..." placeholderTextColor="#fff" />
 
         <Text style={styles.titleForm}>Senha</Text>
-        <TextInput style={styles.input} placeholder="Digite sua senha" />
+        <TextInput style={styles.input} onChangeText={setPassword} placeholder="Digite sua senha" placeholderTextColor="#fff" />
 
-
-        <Link href={"../../(tabs)/home"}>
-          <TouchableOpacity style={styles.button}>
+        {/* <Link href={"../../(tabs)/home"}> */}
+          <TouchableOpacity onPress={Logar} style={styles.button}>
               <Text style={styles.buttonText}>Entrar</Text>
           </TouchableOpacity>
-        </Link>
+        {/* </Link> */}
 
         <TouchableOpacity style={styles.buttonRegister} >
           <Link href="../createLogin">
             <Text style={styles.buttonTextRegister}>Não possui uma conta? Cadastre-se</Text>
           </Link>
+          {incorretLogin ? <Text style={styles.userIncorreto}>Usuário ou senha incorretos</Text>:<></> }
+            
         </TouchableOpacity>
       </Animatable.View>
-
-      
     </View>
-
-  
   );
 }
 const styles= StyleSheet.create({
@@ -43,7 +62,7 @@ const styles= StyleSheet.create({
   },
   containerHeader:{
     marginTop: "10%",
-    marginBottom: "8%",
+    marginBottom: "15%",
     paddingStart: "5%"
   },
   message:{
@@ -71,7 +90,7 @@ const styles= StyleSheet.create({
     marginBottom: 12,
     borderBottomColor: "#fff",
     fontSize: 16,
-    color: "#fff"
+    color: "#fff",
   },
   button:{
     backgroundColor: "#fff",
@@ -94,5 +113,9 @@ const styles= StyleSheet.create({
   },
   buttonTextRegister:{
     color: "#fff"
+  },
+  userIncorreto:{
+    marginTop: "2%",
+    color: "red",
   }
 })

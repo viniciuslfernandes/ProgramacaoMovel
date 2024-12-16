@@ -23,7 +23,7 @@ export default function TabsLayout() {
       }}/>
       <Tabs.Screen name="editUser" options={{ 
           headerShown: false,   
-          title: "Criar Evento",
+          title: "Editar Perfil",
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="user" size={24} color={color} />
           )

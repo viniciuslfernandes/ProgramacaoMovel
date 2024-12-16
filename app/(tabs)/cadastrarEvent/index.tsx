@@ -1,9 +1,14 @@
-import { Text, View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView, StyleSheet, TouchableOpacity, Platform, Button  } from "react-native";
 import { useFonts } from 'expo-font';
 import { useState } from "react";
 import {  TextInput, Provider as PaperProvider } from 'react-native-paper';
 import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker';
 import { EduVICWANTBeginner_400Regular } from '@expo-google-fonts/edu-vic-wa-nt-beginner';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useAuth } from "@/auth/authProvider";
+import axios from "axios";
+import { router } from "expo-router";
+import { format } from "date-fns";
 
 export default function cadastrarEvent() {
   const [fontsLoaded] = useFonts({
@@ -11,6 +16,77 @@ export default function cadastrarEvent() {
     EduVICWANTBeginner_400Regular
   });
   const [eventTitle, setEventTitle] = useState('');
+  const [eventCep, setEventCep] = useState('');
+  const [eventCidade, setEventCidade] = useState('');
+  const [eventEstado, setEventEstado] = useState('');
+  const [eventNumero, setEventNumero] = useState('');
+  const [eventRua, setEventRua] = useState('');
+  const [eventBairro, setEventBairro] = useState('');
+  const [eventComplemento, setEventComplemento] = useState('');
+  const [eventDescricao, setEventDescricao] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
+  const { userEmail } = useAuth();
+
+  const formatTime = (time: Date): string => format(time, "HH:mm:ss");
+  const formatDate = (date: Date): string => format(date, "yyyy-MM-dd");
+
+  const CriarEvent = async()=>{
+    var jsonBody = {
+      event_date : formatDate(date),
+      description: eventDescricao,
+      time: formatTime(time),
+      title: eventTitle,
+      email_user: userEmail,
+      bairro: eventBairro,
+      cep: eventCep,
+      cidade: eventCidade,
+      complemento: eventComplemento,
+      estado: eventEstado,
+      numero: eventNumero,
+      rua: eventRua
+    }
+    console.log(jsonBody)
+    try{
+      const response = await axios.post("http://192.168.3.5:3000/events", jsonBody)
+      // setDate(new Date());
+      // setEventDescricao("");
+      // setTime(new Date());
+      // setEventTitle("");
+      // setEventBairro("");
+      // setEventCep("");
+      // setEventCidade("");
+      // setEventComplemento("");
+      // setEventEstado("");
+      // setEventNumero("");
+      // setEventRua("");
+      router.replace('/(tabs)/home')
+    }catch(error){
+      console.error('Error:', error);
+    }
+  }
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const onChangeDate = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(false);
+    if (selectedDate) setDate(selectedDate);
+  };
+
+  const onChangeTime = (event: any, selectedTime?: Date) => {
+    setShowTimePicker(false); 
+    if (selectedTime) setTime(selectedTime); 
+  };
+
+  const formatedTime=(time:string)=>{
+    const [hours, minutes] = time.split(':');
+    return  `${hours}:${minutes}`;
+  }
+  const timeFormatada = formatedTime(time.toLocaleTimeString())
+  
+
+
   return (
     <ScrollView style={styles.container}>
       <View >
@@ -26,42 +102,64 @@ export default function cadastrarEvent() {
       </View>
 
       <View style={styles.containerForm}>
-        <TextInput label="Nome do Evento" mode="flat" style={styles.input} />
+        <TextInput label="Nome do Evento" mode="flat" style={styles.input} onChangeText={setEventTitle}/>
         
-        <View>
-          {/* data e hora */}
+      <View style={styles.formRow}>
+        <View style={styles.inputForm}>
+          <Button title={date.toLocaleDateString()} onPress={() => setShowDatePicker(true)} />
+          {showDatePicker && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            onChange={onChangeDate}
+          />
+          )}
         </View>
+        <View style={styles.inputForm}>
+          <Button title={timeFormatada} onPress={() => setShowTimePicker(true)} />
+          {showTimePicker && (
+          <DateTimePicker
+            value={time}
+            mode="time"
+            onChange={onChangeTime}
+          />
+          )}
+        </View>
+   
+      </View>
         
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="CEP" mode="flat" style={styles.input} />
+            <TextInput label="CEP" mode="flat" style={styles.input} onChangeText={setEventCep}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Cidade" mode="flat" style={styles.input} /> 
+          <TextInput label="Cidade" mode="flat" style={styles.input} onChangeText={setEventCidade} /> 
           </View>
         </View>
 
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="Estado" mode="flat" style={styles.input} />
+            <TextInput label="Estado" mode="flat" style={styles.input} onChangeText={setEventEstado}/> 
+            {/* COLOCAR O PADRAO AQUI MG, RJ, SP...*/}
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Número" mode="flat" style={styles.input} /> 
+          <TextInput label="Número" mode="flat" style={styles.input} onChangeText={setEventNumero}/> 
           </View>
         </View>
 
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="Rua" mode="flat" style={styles.input} />
+            <TextInput label="Rua" mode="flat" style={styles.input} onChangeText={setEventRua}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Bairro" mode="flat" style={styles.input} /> 
+          <TextInput label="Bairro" mode="flat" style={styles.input} onChangeText={setEventBairro}/> 
           </View>
         </View>
-        <TextInput label="Complemento" mode="flat" style={styles.input} />
-        <TextInput label="Descrição do evento" mode="flat" style={styles.input} />
+        <TextInput label="Complemento" mode="flat" style={styles.input} onChangeText={setEventComplemento}/>
+        <TextInput label="Descrição do evento" mode="flat" style={styles.input}  onChangeText={setEventDescricao}/>
         <View style={styles.containerButton}>
-          <TouchableOpacity style={styles.button}>
+
+          <TouchableOpacity onPress={CriarEvent} style={styles.button}>
             <Text style={styles.buttonText}>Criar</Text>
           </TouchableOpacity>
         </View>
@@ -121,7 +219,8 @@ const styles = StyleSheet.create({
   },
   formRow:{
     flexDirection: 'row',
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    marginTop:"2%",
   },
   inputForm:{
     width:"45%",
