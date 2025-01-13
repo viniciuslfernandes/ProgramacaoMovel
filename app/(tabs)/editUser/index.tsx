@@ -8,7 +8,7 @@ import { Avatar } from "react-native-elements";
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
 import { useAuth } from "@/auth/authProvider";
-
+import { router } from "expo-router";
 
 export default function cadastrarEvent() {
   const [fontsLoaded] = useFonts({
@@ -29,14 +29,21 @@ export default function cadastrarEvent() {
   const [userRua, setUserRua] = useState('');
   const [userBairro, setUserBairro] = useState('');
 
-  const { userEmail } = useAuth();
-  
+  const estados = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE',
+    'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+  ];
+
+  const { user } = useAuth();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://192.168.3.5:3000/usuariosInformacoes", {
+        const response = await axios.get("http://localhost:3000/usuariosInformacoes", {
           params: {
-            email: userEmail
+            email: user?.email
+          }, 
+          headers:{
+            Authorization: user?.token
           }
         });
         setUserName(response.data.name_user)
@@ -46,20 +53,18 @@ export default function cadastrarEvent() {
         setUserNumero(response.data.numero)
         setUserRua(response.data.rua)
         setUserBairro(response.data.bairro)
-        // console.log(response.data)
-        
-      } catch (err) {
+      } catch (error) {
         // setError('Erro ao fazer requisição');
       } finally {
         // setLoading(false);
       }
     };
     fetchData();
-  }, [userEmail]);
+  }, [user?.email]);
 
   const Editar = async()=>{
     var jsonBody = {
-      email: userEmail,
+      email: user?.email,
       name_user: userName,
       cep: userCep,
       genero: userGenero,
@@ -71,7 +76,8 @@ export default function cadastrarEvent() {
       bairro: userBairro
     }    
     try{
-      const response = await axios.put("http://192.168.3.5:3000/usuarios", jsonBody) 
+      const response = await axios.put("http://localhost:3000/usuarios", jsonBody) 
+      router.replace('/(tabs)/home');
     }catch(error){
       console.error('Error:', error);
     }
@@ -104,7 +110,7 @@ export default function cadastrarEvent() {
       
         <Text style={styles.subTitle}>Dados Pessoais:</Text>
         <TextInput label="Nome completo" value={userName} onChangeText={setUserName} mode="flat" style={styles.input}/>
-        <TextInput label="Email" value={userEmail ?? ""} mode="flat" style={styles.input} />
+        <TextInput label="Email" value={user?.email ?? ""} mode="flat" style={styles.input} />
         
 
         <View style={styles.formRow}>
@@ -143,9 +149,16 @@ export default function cadastrarEvent() {
         </View>
 
         <View style={styles.formRow}>
-          <View style={styles.inputForm}>
-            <TextInput label="Estado" mode="flat" value={userEstado} style={styles.input} onChangeText={setUserEstado}/>
-          </View>
+          <Picker
+            selectedValue={userEstado}
+            onValueChange={(itemValue) => setUserEstado(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Estado" value="" />
+            {estados.map((estado, index) => (
+              <Picker.Item key={index} label={estado} value={estado} />
+            ))}
+          </Picker>
           <View style={styles.inputForm}>
           <TextInput label="Número" mode="flat" value={userNumero} style={styles.input} onChangeText={setUserNumero} /> 
           </View>
@@ -181,9 +194,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     width:"45%",
     borderBottomWidth: 1, 
-    borderColor:"white",
+    borderColor:"grey",
     borderBottomColor: 'grey', 
-    color: 'grey', 
+    color: '#565656', 
     paddingVertical: 10,
   },
   subTitle:{

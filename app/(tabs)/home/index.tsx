@@ -7,6 +7,7 @@ import CardEvent from "@/components/cardEvent";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/auth/authProvider";
+import { router } from "expo-router";
 
 interface Event {
   id: string,
@@ -29,12 +30,18 @@ export default function Home() {
     PermanentMarker_400Regular,
     EduVICWANTBeginner_400Regular
   });
+
+  const { user } = useAuth();
  
   const [events, setEvents] = useState<Event[]>([]);
   useEffect(()=>{
     const fetchData = async()=>{
       try{
-        const response = await axios.get('http://192.168.3.5:3000/events');
+        const response = await axios.get('http://localhost:3000/events', {
+          headers:{
+            Authorization: user?.token
+          }
+        } );
         const dados = response.data;
         // console.log(response.data)
         let vet: Event[] = [];

@@ -28,16 +28,16 @@ interface CardsComponentsProps {
 const { height } = Dimensions.get('window');
 const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_user, title, time, event_date, imageLink, rua, numero, bairro, cidade, cep, referencia, description}) => {
 
-    const { userEmail } = useAuth();
+    const { user } = useAuth();
     const [edit, setEdit]= React.useState(false);
 
     React.useEffect(() => {
-        if (userEmail === email_user) {
+        if (user?.email === email_user) {
             setEdit(true);
         } else {
             setEdit(false);
         }
-    }, [userEmail, email_user]);
+    }, [user?.email, email_user]);
 
     const formatedTime=(time:string)=>{
         const [hours, minutes] = time.split(':');
@@ -48,7 +48,7 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
 
     const Excluir = async(id: string)=>{
         try{
-            const response = await axios.delete("http://192.168.3.5:3000/events", {
+            const response = await axios.delete("http://localhost:3000/events", {
                 data: { id }
             });
         }

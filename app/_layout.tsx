@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import axios from "axios";
 import { SessionProvider } from "@/auth/authProvider";
-import { useAuth } from "@/auth/authProvider";
 
 export default function RootLayout() {
   return (

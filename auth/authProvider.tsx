@@ -1,40 +1,57 @@
-import React, { useContext, useState, createContext, PropsWithChildren } from "react";
+import React, { useContext, useState, createContext, PropsWithChildren, useEffect } from "react";
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface User {
+  email: string;
+  token: string;
+}
+
 
 interface AuthContextType {
+  user: User | null,
+  loading: boolean,
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   signUp: (email: string, password: string, name_user: string) => Promise<void>;
-  session?: string | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  userEmail?: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: false,
   signIn: async () => {},
   signOut: () => {},
   signUp: async () => {},
-  session: null,
-  isLoading: false,
-  isAuthenticated: false,
-  userEmail: null,
 });
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  const [isLoading, setLoading] = useState(false);
-  const [session, setSession] = useState<string | null>(null);
-  const isAuthenticated = Boolean(session);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() =>{
+    const loadStoredUser = async () => {
+      const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      setLoading(false);
+    };
+    loadStoredUser();
+  }, []);
 
   async function signIn(email: string, password: string): Promise<void> {
     try {
-        const response = await axios.post("http://192.168.3.5:3000/login", { email, password });
-        const { token } = response.data;
-        console.log(token)
+        const response = await axios.post("http://localhost:3000/login", { email, password });
+        const { token} = response.data;
+        console.log(response.data)
         if (token) {
-            setLoading(true);
-            setUserEmail(email);
+          const loggedUser: User = {
+            email: email,
+            token
+          };
+          console.log(loggedUser)
+          await AsyncStorage.setItem('user', JSON.stringify(loggedUser));
+          setUser(loggedUser);
         } else {
             throw new Error("Email ou senha incorretos");
         }
@@ -44,26 +61,26 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
 }
 
-  const signUp = async (email: string, password: string, name_user: string) => {
-    setLoading(true);
-    try {
-      await axios.post("http://192.168.3.5:3000/usuarios", { email, password, name_user});
-      await signIn(email, password);
-    } catch (error) {
-      console.error("Error signing up:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+async function signUp(email: string, password: string, name_user: string): Promise<void> {
+  setLoading(true);
+  try {
+    await axios.post("http://192.168.3.5:3000/usuarios", { email, password, name_user });
+    await signIn(email, password);
+  } catch (error) {
+    console.error("Error signing up:", error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+}
 
-  const signOut = () => {
-    setSession(null);
-    setUserEmail(null);
+  const signOut = async (): Promise<void> => {
+    await AsyncStorage.removeItem('user');
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ signIn, signOut, signUp, session, isLoading, isAuthenticated, userEmail }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut, signUp }}>
       {children}
     </AuthContext.Provider>
   );

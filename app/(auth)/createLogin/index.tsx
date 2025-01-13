@@ -67,7 +67,7 @@ export default function CreateLogin() {
         <TextInput style={styles.input} onChangeText={setEmail} placeholder="Digite seu email..." placeholderTextColor="#fff" />
 
         <Text style={styles.titleForm}>Senha</Text>
-        <TextInput style={styles.input} onChangeText={setPassword} placeholder="Digite sua senha" placeholderTextColor="#fff"/>
+        <TextInput secureTextEntry={true} style={styles.input} onChangeText={setPassword} placeholder="Digite sua senha" placeholderTextColor="#fff"/>
 
 
         {/* <Link href={"../../(tabs)/home"}> */}

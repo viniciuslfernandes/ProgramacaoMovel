@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, StyleSheet, TouchableOpacity, Platform, Button  } from "react-native";
+import { Text, View, ScrollView, StyleSheet, TouchableOpacity, Button } from "react-native";
 import { useFonts } from 'expo-font';
 import { useState } from "react";
 import {  TextInput, Provider as PaperProvider } from 'react-native-paper';
@@ -9,12 +9,20 @@ import { useAuth } from "@/auth/authProvider";
 import axios from "axios";
 import { router } from "expo-router";
 import { format } from "date-fns";
+import { Picker } from '@react-native-picker/picker';
 
 export default function cadastrarEvent() {
+  
   const [fontsLoaded] = useFonts({
     PermanentMarker_400Regular,
     EduVICWANTBeginner_400Regular
   });
+
+  const estados = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE',
+    'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+  ];
+
   const [eventTitle, setEventTitle] = useState('');
   const [eventCep, setEventCep] = useState('');
   const [eventCidade, setEventCidade] = useState('');
@@ -26,7 +34,8 @@ export default function cadastrarEvent() {
   const [eventDescricao, setEventDescricao] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
-  const { userEmail } = useAuth();
+  
+  const { user } = useAuth();
 
   const formatTime = (time: Date): string => format(time, "HH:mm:ss");
   const formatDate = (date: Date): string => format(date, "yyyy-MM-dd");
@@ -37,7 +46,7 @@ export default function cadastrarEvent() {
       description: eventDescricao,
       time: formatTime(time),
       title: eventTitle,
-      email_user: userEmail,
+      email_user: user?.email,
       bairro: eventBairro,
       cep: eventCep,
       cidade: eventCidade,
@@ -48,7 +57,7 @@ export default function cadastrarEvent() {
     }
     console.log(jsonBody)
     try{
-      const response = await axios.post("http://192.168.3.5:3000/events", jsonBody)
+      const response = await axios.post("http://localhost:3000/events", jsonBody)
       // setDate(new Date());
       // setEventDescricao("");
       // setTime(new Date());
@@ -61,6 +70,7 @@ export default function cadastrarEvent() {
       // setEventNumero("");
       // setEventRua("");
       router.replace('/(tabs)/home')
+      
     }catch(error){
       console.error('Error:', error);
     }
@@ -138,10 +148,18 @@ export default function cadastrarEvent() {
         </View>
 
         <View style={styles.formRow}>
-          <View style={styles.inputForm}>
-            <TextInput label="Estado" mode="flat" style={styles.input} onChangeText={setEventEstado}/> 
-            {/* COLOCAR O PADRAO AQUI MG, RJ, SP...*/}
-          </View>
+
+          <Picker
+            selectedValue={eventEstado}
+            onValueChange={(itemValue) => setEventEstado(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Estado" value="" />
+            {estados.map((estado, index) => (
+              <Picker.Item key={index} label={estado} value={estado} />
+            ))}
+          </Picker>
+
           <View style={styles.inputForm}>
           <TextInput label="Número" mode="flat" style={styles.input} onChangeText={setEventNumero}/> 
           </View>
@@ -164,9 +182,6 @@ export default function cadastrarEvent() {
           </TouchableOpacity>
         </View>
       </View>
-
-      
-
     </ScrollView>
   );
 }
@@ -206,6 +221,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     paddingStart: "5%",
     paddingEnd: "5%",
+  },
+  picker: { 
+    fontSize: 15,
+    width:"45%",
+    borderBottomWidth: 2, 
+    borderColor:"grey",
+    borderBottomColor: 'grey', 
+    color: '#565656', 
+    paddingVertical: 10,
   },
   titleForm:{
     fontSize: 20,

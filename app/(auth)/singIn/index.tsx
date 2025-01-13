@@ -10,8 +10,8 @@ export default function SingIn() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [incorretLogin, setIncorretLogin] = React.useState(false);
-  const { signIn, isLoading } = useAuth();
+  const [incorretLogin, setIncorretLogin] = useState(false);
+  const { signIn} = useAuth();
   
   const Logar = async()=>{
     var jsonBody = {email: email, password: password};
