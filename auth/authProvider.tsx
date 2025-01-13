@@ -41,7 +41,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   async function signIn(email: string, password: string): Promise<void> {
     try {
-        const response = await axios.post("http://localhost:3000/login", { email, password });
+        const response = await axios.post("http://54.173.126.116:3001/login", { email, password });
         const { token} = response.data;
         console.log(response.data)
         if (token) {
@@ -64,7 +64,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 async function signUp(email: string, password: string, name_user: string): Promise<void> {
   setLoading(true);
   try {
-    await axios.post("http://192.168.3.5:3000/usuarios", { email, password, name_user });
+    await axios.post("http://54.173.126.116:3001/usuarios", { email, password, name_user });
     await signIn(email, password);
   } catch (error) {
     console.error("Error signing up:", error);

@@ -48,7 +48,7 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
 
     const Excluir = async(id: string)=>{
         try{
-            const response = await axios.delete("http://localhost:3000/events", {
+            const response = await axios.delete("http://54.173.126.116:3001/events", {
                 data: { id }
             });
         }

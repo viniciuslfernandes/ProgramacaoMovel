@@ -38,7 +38,7 @@ export default function cadastrarEvent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/usuariosInformacoes", {
+        const response = await axios.get("http://54.173.126.116:3001/usuariosInformacoes", {
           params: {
             email: user?.email
           }, 
@@ -76,7 +76,7 @@ export default function cadastrarEvent() {
       bairro: userBairro
     }    
     try{
-      const response = await axios.put("http://localhost:3000/usuarios", jsonBody) 
+      const response = await axios.put("http://54.173.126.116:3001/usuarios", jsonBody) 
       router.replace('/(tabs)/home');
     }catch(error){
       console.error('Error:', error);
