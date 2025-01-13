@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000; //porta padrão
+const port = 3001; //porta padrão
 const mysql = require('mysql2');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: 'false'}));
@@ -33,7 +33,7 @@ const middlewareValidarJWT = (req, res, next) => {
 
 const db ={
     host     : '54.173.126.116',
-    port     : 3001,
+    port     : 3306,
     user     : 'vinicius',
     password : 'vinicius',
     database : 'vinicius'
