@@ -32,11 +32,11 @@ const middlewareValidarJWT = (req, res, next) => {
 };
 
 const db ={
-    host     : 'localhost',
-    port     : 3306,
-    user     : 'root',
-    password : '34225202',
-    database : 'eventsdb'
+    host     : '54.173.126.116',
+    port     : 3001,
+    user     : 'vinicius',
+    password : 'vinicius',
+    database : 'vinicius'
   }
 
 const  execSQLQuery = (sqlQry, id, res) =>{
