@@ -57,7 +57,7 @@ export default function cadastrarEvent() {
     }
     console.log(jsonBody)
     try{
-      const response = await axios.post("http://54.173.126.116:3001/events", jsonBody)
+      const response = await axios.post("http://3.209.65.64:3001/events", jsonBody)
       // setDate(new Date());
       // setEventDescricao("");
       // setTime(new Date());

@@ -37,7 +37,7 @@ export default function Home() {
   useEffect(()=>{
     const fetchData = async()=>{
       try{
-        const response = await axios.get('http://54.173.126.116:3001/events', {
+        const response = await axios.get('http://3.209.65.64:3001/events', {
           headers:{
             Authorization: user?.token
           }

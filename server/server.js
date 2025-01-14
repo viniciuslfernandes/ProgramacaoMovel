@@ -32,7 +32,7 @@ const middlewareValidarJWT = (req, res, next) => {
 };
 
 const db ={
-    host     : '54.173.126.116',
+    host     : '3.209.65.64',
     port     : 3306,
     user     : 'vinicius',
     password : 'vinicius',
