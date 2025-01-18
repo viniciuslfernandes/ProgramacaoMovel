@@ -7,6 +7,7 @@ import { Avatar } from "react-native-elements";
 import { Image } from 'react-native';
 import { useAuth } from '@/auth/authProvider';
 import axios from 'axios';
+import { useRefreshPage } from "@/auth/refreshPages";
 
 
 interface CardsComponentsProps {
@@ -30,6 +31,7 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
 
     const { user } = useAuth();
     const [edit, setEdit]= React.useState(false);
+    const { setRefreshState } = useRefreshPage();
 
     React.useEffect(() => {
         if (user?.email === email_user) {
@@ -51,6 +53,7 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
             const response = await axios.delete("http://3.209.65.64:3001/events", {
                 data: { id }
             });
+            setRefreshState("refreshHome", true)
         }
         catch(error){
             console.error('Error:', error);

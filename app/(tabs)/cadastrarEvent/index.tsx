@@ -10,6 +10,7 @@ import axios from "axios";
 import { router } from "expo-router";
 import { format } from "date-fns";
 import { Picker } from '@react-native-picker/picker';
+import { useRefreshPage } from "@/auth/refreshPages";
 
 export default function cadastrarEvent() {
   
@@ -36,6 +37,7 @@ export default function cadastrarEvent() {
   const [time, setTime] = useState(new Date());
   
   const { user } = useAuth();
+  const { refreshEditUser, setRefreshState } = useRefreshPage();
 
   const formatTime = (time: Date): string => format(time, "HH:mm:ss");
   const formatDate = (date: Date): string => format(date, "yyyy-MM-dd");
@@ -69,6 +71,8 @@ export default function cadastrarEvent() {
       // setEventEstado("");
       // setEventNumero("");
       // setEventRua("");
+      setRefreshState("refreshHome", true)
+      setRefreshState("refreshEditUser", true)
       router.replace('/(tabs)/home')
       
     }catch(error){
