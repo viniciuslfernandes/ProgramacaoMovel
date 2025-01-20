@@ -19,7 +19,7 @@ export default function cadastrarEvent() {
   const ages = Array.from({ length: 100 }, (_, i) => i + 1);
   
   const [userGenero, setUserGenero] = useState('');
-  const [userIdade, setUserIdade] = useState('');
+  const [userIdade, setUserIdade] = useState<number | "">("");
 
   const[userName, setUserName] = useState("");
   const [userCep, setUserCep] = useState('');
@@ -46,7 +46,10 @@ export default function cadastrarEvent() {
             Authorization: user?.token
           }
         });
+        console.log(response.data)
         setUserName(response.data.name_user)
+        setUserIdade(Number(response.data.idade))
+        setUserGenero(response.data.genero)
         setUserCep(response.data.cep)
         setUserCidade(response.data.cidade)
         setUserEstado(response.data.estado)
@@ -125,13 +128,13 @@ export default function cadastrarEvent() {
             </Picker>
             <Picker
                 selectedValue={userIdade}
-                onValueChange={(itemValue) => setUserIdade(itemValue)}
+                onValueChange={(itemValue) => setUserIdade(Number(itemValue))}
                 style={styles.picker}
             >
-            <Picker.Item label="Idade" value="" />
-                {ages.map((age) => (
-                    <Picker.Item key={age} label={`${age}`} value={age} />
-                ))}
+              <Picker.Item label="Idade" value="" />
+              {ages.map((age, index) => (
+                  <Picker.Item key={index} label={`${age}`} value={age} />
+              ))}
             </Picker>
         </View>
 

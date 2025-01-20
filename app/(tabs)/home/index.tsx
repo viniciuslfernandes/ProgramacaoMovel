@@ -73,7 +73,7 @@ export default function Home() {
       fetchData(); 
     }
     
-    console.log(refreshHome)
+    // console.log(refreshHome)
     if(refreshHome){
       fetchData(); 
       setRefreshState("refreshHome", false);

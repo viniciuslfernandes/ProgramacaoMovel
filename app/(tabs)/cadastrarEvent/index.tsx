@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import { format } from "date-fns";
 import { Picker } from '@react-native-picker/picker';
 import { useRefreshPage } from "@/auth/refreshPages";
+import { useEffect } from "react";
 
 export default function cadastrarEvent() {
   
@@ -42,6 +43,24 @@ export default function cadastrarEvent() {
   const formatTime = (time: Date): string => format(time, "HH:mm:ss");
   const formatDate = (date: Date): string => format(date, "yyyy-MM-dd");
 
+  useEffect(() => {
+    if(refreshEditUser){
+      console.log(refreshEditUser + "1")
+      setDate(new Date());
+      setEventDescricao("");
+      setTime(new Date());
+      setEventTitle("");
+      setEventBairro("");
+      setEventCep("");
+      setEventCidade("");
+      setEventComplemento("");
+      setEventEstado("");
+      setEventNumero("");
+      setEventRua("");
+      setRefreshState("refreshEditUser", false);
+    }
+  }, [refreshEditUser]);
+
   const CriarEvent = async()=>{
     var jsonBody = {
       event_date : formatDate(date),
@@ -60,17 +79,7 @@ export default function cadastrarEvent() {
     console.log(jsonBody)
     try{
       const response = await axios.post("http://3.209.65.64:3001/events", jsonBody)
-      // setDate(new Date());
-      // setEventDescricao("");
-      // setTime(new Date());
-      // setEventTitle("");
-      // setEventBairro("");
-      // setEventCep("");
-      // setEventCidade("");
-      // setEventComplemento("");
-      // setEventEstado("");
-      // setEventNumero("");
-      // setEventRua("");
+      
       setRefreshState("refreshHome", true)
       setRefreshState("refreshEditUser", true)
       router.replace('/(tabs)/home')
@@ -116,7 +125,7 @@ export default function cadastrarEvent() {
       </View>
 
       <View style={styles.containerForm}>
-        <TextInput label="Nome do Evento" mode="flat" style={styles.input} onChangeText={setEventTitle}/>
+        <TextInput label="Nome do Evento" mode="flat" style={styles.input} onChangeText={setEventTitle} value={eventTitle}/>
         
       <View style={styles.formRow}>
         <View style={styles.inputForm}>
@@ -144,10 +153,10 @@ export default function cadastrarEvent() {
         
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="CEP" mode="flat" style={styles.input} onChangeText={setEventCep}/>
+            <TextInput label="CEP" mode="flat" style={styles.input} onChangeText={setEventCep} value={eventCep}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Cidade" mode="flat" style={styles.input} onChangeText={setEventCidade} /> 
+          <TextInput label="Cidade" mode="flat" style={styles.input} onChangeText={setEventCidade} value={eventCidade} /> 
           </View>
         </View>
 
@@ -165,20 +174,20 @@ export default function cadastrarEvent() {
           </Picker>
 
           <View style={styles.inputForm}>
-          <TextInput label="Número" mode="flat" style={styles.input} onChangeText={setEventNumero}/> 
+          <TextInput label="Número" mode="flat" style={styles.input} onChangeText={setEventNumero} value={eventNumero}/> 
           </View>
         </View>
 
         <View style={styles.formRow}>
           <View style={styles.inputForm}>
-            <TextInput label="Rua" mode="flat" style={styles.input} onChangeText={setEventRua}/>
+            <TextInput label="Rua" mode="flat" style={styles.input} onChangeText={setEventRua} value={eventRua}/>
           </View>
           <View style={styles.inputForm}>
-          <TextInput label="Bairro" mode="flat" style={styles.input} onChangeText={setEventBairro}/> 
+          <TextInput label="Bairro" mode="flat" style={styles.input} onChangeText={setEventBairro} value={eventBairro}/> 
           </View>
         </View>
-        <TextInput label="Complemento" mode="flat" style={styles.input} onChangeText={setEventComplemento}/>
-        <TextInput label="Descrição do evento" mode="flat" style={styles.input}  onChangeText={setEventDescricao}/>
+        <TextInput label="Complemento" mode="flat" style={styles.input} onChangeText={setEventComplemento} value={eventComplemento}/>
+        <TextInput label="Descrição do evento" mode="flat" style={styles.input}  onChangeText={setEventDescricao} value={eventDescricao}/>
         <View style={styles.containerButton}>
 
           <TouchableOpacity onPress={CriarEvent} style={styles.button}>
