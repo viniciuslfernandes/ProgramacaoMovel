@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { Picker } from '@react-native-picker/picker';
 import { useRefreshPage } from "@/auth/refreshPages";
 import { useEffect } from "react";
+import ImagePickerButton from "@/components/imageButtonAdd";
 
 export default function cadastrarEvent() {
   
@@ -189,6 +190,8 @@ export default function cadastrarEvent() {
         <TextInput label="Complemento" mode="flat" style={styles.input} onChangeText={setEventComplemento} value={eventComplemento}/>
         <TextInput label="Descrição do evento" mode="flat" style={styles.input}  onChangeText={setEventDescricao} value={eventDescricao}/>
         <View style={styles.containerButton}>
+  
+          <ImagePickerButton></ImagePickerButton>
 
           <TouchableOpacity onPress={CriarEvent} style={styles.button}>
             <Text style={styles.buttonText}>Criar</Text>
