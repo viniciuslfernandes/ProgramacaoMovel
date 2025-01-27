@@ -37,16 +37,21 @@ export default function Home() {
 
   const { user } = useAuth();
   const { refreshHome, setRefreshState } = useRefreshPage();
-  console.log(refreshHome)
+  // console.log(refreshHome)
 
   const [events, setEvents] = useState<Event[]>([]);
   const [refreshing, setRefreshing] = useState(false)
+  
+  const [search, setSearch] = useState('');
 
   const fetchData = async()=>{
     try{
       const response = await axios.get('http://3.209.65.64:3001/events', {
         headers:{
           Authorization: user?.token
+        },
+        params:{
+          search: search
         }
       } );
       const dados = response.data;
@@ -79,7 +84,7 @@ export default function Home() {
       setRefreshState("refreshHome", false);
     }
    
-  }, [refreshHome]);
+  }, [refreshHome, search]);
 
   type ItemProps = {
     id: string
@@ -151,7 +156,7 @@ export default function Home() {
               Encontre os melhores eventos e construa mémorias.
             </Text>
           </View>
-          <SearchBarComp />
+          <SearchBarComp search={search} setSearch={setSearch} />
           <View style={{ marginBottom: "2%" }} />
         </View>
       }

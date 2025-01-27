@@ -34,7 +34,8 @@ export default function cadastrarEvent() {
     'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
   ];
 
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -84,6 +85,10 @@ export default function cadastrarEvent() {
     }catch(error){
       console.error('Error:', error);
     }
+  }
+  const Sair = async()=>{
+    signOut
+    router.replace('/(auth)/singIn')
   }
 
 
@@ -181,10 +186,12 @@ export default function cadastrarEvent() {
             <Text style={styles.buttonText}>Editar Perfil</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.containerButton}>
+          <TouchableOpacity onPress={Sair} style={styles.buttonRed}>
+            <Text style={styles.buttonText}>Sair</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      
-
     </ScrollView>
   );
 }
@@ -261,6 +268,16 @@ const styles = StyleSheet.create({
   },
   button:{
     backgroundColor: "#1E90FF" ,
+    borderRadius: 4,
+    width: '40%',
+    paddingVertical: 8,
+    marginTop: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    // maxWidth: '40%',
+  },
+  buttonRed:{
+    backgroundColor: "red" ,
     borderRadius: 4,
     width: '40%',
     paddingVertical: 8,

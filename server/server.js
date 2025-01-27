@@ -115,7 +115,7 @@ app.post('/usuarios', (req, res) => {
 })
 app.put('/usuarios', (req, res) =>{
   const data = req.body;
-  console.log(data)
+  // console.log(data)
   const id = [data.name_user, data.cep, data.genero, data.idade, data.cidade, data.estado, data.numero, data.rua, data.bairro, data.email];
   execSQLQuery('UPDATE users SET name_user=?, cep=?, genero=?, idade=?, cidade=?, estado=?, numero=?, rua=?, bairro=? WHERE email=?', id, res)
 })
@@ -127,15 +127,23 @@ app.delete('/usuarios', (req, res) =>{
 
 // --------------------------- EVENTOS -----------------------------------------
 app.get('/events', middlewareValidarJWT, (req, res) => {
-  console.log(req);
-  const id = [];
-  execSQLQuery('SELECT * FROM events', id, res);
+  const search = req.query.search
+  console.log(search)
+  if(search==""){
+    console.log("aqui")
+    execSQLQuery('SELECT * FROM events', [], res);
+  }else{
+    const query = 'SELECT * FROM events WHERE title LIKE ?';
+    const params = [`${search}%`];
+    execSQLQuery(query, params, res);
+  }
+  
 })
 
 app.post('/events', (req, res) => {
   const data = req.body;
   const id = [data.event_date, data.description, data.time, data.title, data.email_user, data.bairro, data.cep, data.cidade, data.complemento, data.estado, data.numero, data.rua];
-  console.log(id)
+  // console.log(id)
   
   execSQLQuery('INSERT INTO events(event_date, description, time, title, email_user, bairro, cep, cidade, complemento, estado, numero, rua) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ', id, res);
 })

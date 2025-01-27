@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { SearchBar } from '@rneui/themed';
 import { View, Text, StyleSheet } from 'react-native';
 
-type SearchBarComponentProps = {};
+type SearchBarComponentProps = {
+  search: string;
+  setSearch: (value: string) => void;
+};
+
 
 export default function SearchBarComp(props: SearchBarComponentProps) {
-    const [search, setSearch] = useState("");
-
+    const {search, setSearch} = props;
     const updateSearch = (search: string) => {
         setSearch(search);
     };
+    // console.log(search)
   return (
     <View style={styles.view}>
         <SearchBar
