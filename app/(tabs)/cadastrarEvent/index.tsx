@@ -59,6 +59,7 @@ export default function cadastrarEvent() {
       setEventNumero("");
       setEventRua("");
       setRefreshState("refreshEditUser", false);
+      setUploadImg("")
     }
   }, [refreshEditUser]);
 
@@ -75,7 +76,8 @@ export default function cadastrarEvent() {
       complemento: eventComplemento,
       estado: eventEstado,
       numero: eventNumero,
-      rua: eventRua
+      rua: eventRua,
+      imgLink: uploadImg
     }
     console.log(jsonBody)
     try{
@@ -109,7 +111,7 @@ export default function cadastrarEvent() {
   }
   const timeFormatada = formatedTime(time.toLocaleTimeString())
   
-
+  const [uploadImg, setUploadImg] = useState('')
 
   return (
     <ScrollView style={styles.container}>
@@ -191,7 +193,7 @@ export default function cadastrarEvent() {
         <TextInput label="Descrição do evento" mode="flat" style={styles.input}  onChangeText={setEventDescricao} value={eventDescricao}/>
         <View style={styles.containerButton}>
   
-          <ImagePickerButton></ImagePickerButton>
+          <ImagePickerButton uploadImg={uploadImg} setUploadImg={setUploadImg}/>
 
           <TouchableOpacity onPress={CriarEvent} style={styles.button}>
             <Text style={styles.buttonText}>Criar</Text>

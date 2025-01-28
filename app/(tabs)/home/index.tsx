@@ -18,7 +18,7 @@ interface Event {
   title: string;
   event_date: string;
   time: string;
-  // imageLink: string;
+  imgLink: string;
   description: string;
   rua: string;
   numero: string;
@@ -92,7 +92,7 @@ export default function Home() {
     title: string;
     time: string;
     event_date: string;
-    imageLink: string;
+    imgLink: string;
     description: string;
     rua: string;
     numero: string,
@@ -101,14 +101,14 @@ export default function Home() {
     cep: string,
     referencia:string
   }
-  const Item = ({ id, email_user, title, time, event_date, imageLink, rua, numero, bairro, cidade, cep, referencia, description}: ItemProps)=>(
+  const Item = ({ id, email_user, title, time, event_date, imgLink, rua, numero, bairro, cidade, cep, referencia, description}: ItemProps)=>(
     <CardEvent 
       id={id}
       email_user={email_user} 
       title={title} 
       time={time} 
       event_date={event_date} 
-      imageLink={imageLink} 
+      imgLink={imgLink} 
       description={description} 
       rua={rua} 
       numero={numero}
@@ -119,7 +119,7 @@ export default function Home() {
     />
   );
 
-  let imageLink = "https://th.bing.com/th/id/R.06db452fc12c1c27687799e8759bae75?rik=i2PMHbxsCyA2lw&riu=http%3a%2f%2fwww.aplausoeventos.com.br%2fwp-content%2fuploads%2f2019%2f11%2fevento77.jpg&ehk=FLkra0g1%2f91qxuDneGbfuXNUasTuWpk9whM5HybAUcw%3d&risl=&pid=ImgRaw&r=0"
+  // let imageLink = "https://th.bing.com/th/id/R.06db452fc12c1c27687799e8759bae75?rik=i2PMHbxsCyA2lw&riu=http%3a%2f%2fwww.aplausoeventos.com.br%2fwp-content%2fuploads%2f2019%2f11%2fevento77.jpg&ehk=FLkra0g1%2f91qxuDneGbfuXNUasTuWpk9whM5HybAUcw%3d&risl=&pid=ImgRaw&r=0"
   
   return (
   <SafeAreaProvider>
@@ -132,7 +132,7 @@ export default function Home() {
           title={item.title}
           time={item.time}
           event_date={item.event_date}
-          imageLink={imageLink}
+          imgLink={item.imgLink}
           rua={item.rua}
           numero={item.numero}
           bairro={item.bairro}

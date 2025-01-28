@@ -16,7 +16,7 @@ interface CardsComponentsProps {
     title: string;
     time: string;
     event_date: string;
-    imageLink: string;
+    imgLink: string;
     description: string;
     rua: string;
     numero: string,
@@ -27,7 +27,7 @@ interface CardsComponentsProps {
 };
 
 const { height } = Dimensions.get('window');
-const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_user, title, time, event_date, imageLink, rua, numero, bairro, cidade, cep, referencia, description}) => {
+const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_user, title, time, event_date, imgLink, rua, numero, bairro, cidade, cep, referencia, description}) => {
 
     const { user } = useAuth();
     const [edit, setEdit]= React.useState(false);
@@ -87,7 +87,7 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
             <Card.Image
                 style={styles.image}
                 source={{
-                    uri: imageLink,
+                    uri: imgLink,
                 }}
             />
             

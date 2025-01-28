@@ -134,7 +134,7 @@ app.get('/events', middlewareValidarJWT, (req, res) => {
     execSQLQuery('SELECT * FROM events', [], res);
   }else{
     const query = 'SELECT * FROM events WHERE title LIKE ?';
-    const params = [`${search}%`];
+    const params = [`%${search}%`];
     execSQLQuery(query, params, res);
   }
   
@@ -142,10 +142,10 @@ app.get('/events', middlewareValidarJWT, (req, res) => {
 
 app.post('/events', (req, res) => {
   const data = req.body;
-  const id = [data.event_date, data.description, data.time, data.title, data.email_user, data.bairro, data.cep, data.cidade, data.complemento, data.estado, data.numero, data.rua];
-  // console.log(id)
+  const id = [data.event_date, data.description, data.time, data.title, data.email_user, data.bairro, data.cep, data.cidade, data.complemento, data.estado, data.numero, data.rua, data.imgLink];
+  console.log(id)
   
-  execSQLQuery('INSERT INTO events(event_date, description, time, title, email_user, bairro, cep, cidade, complemento, estado, numero, rua) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ', id, res);
+  execSQLQuery('INSERT INTO events(event_date, description, time, title, email_user, bairro, cep, cidade, complemento, estado, numero, rua, imgLink) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ', id, res);
 })
 app.put('/events', (req, res) =>{
   const data = req.body;
