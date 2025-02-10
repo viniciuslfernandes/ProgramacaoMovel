@@ -23,11 +23,12 @@ interface CardsComponentsProps {
     bairro: string,
     cidade: string,
     cep: string,
-    referencia:string
+    referencia:string,
+    distancia:number
 };
 
 const { height } = Dimensions.get('window');
-const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_user, title, time, event_date, imgLink, rua, numero, bairro, cidade, cep, referencia, description}) => {
+const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_user, title, time, event_date, imgLink, rua, numero, bairro, cidade, cep, referencia, description, distancia}) => {
 
     const { user } = useAuth();
     const [edit, setEdit]= React.useState(false);
@@ -59,6 +60,18 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
             console.error('Error:', error);
         }
     }
+
+    const Distancia = ({ distancia }: { distancia: number }) => {
+        const distanciaFormatada = distancia.toFixed(2);
+        return (
+        <>
+        <Text>
+            <Text style={{fontWeight:"bold"}}>Distancia de você: </Text>
+            <Text>{distanciaFormatada}km</Text>
+        </Text>
+        </>
+    );
+      };
 
   return (
     <View style={styles.container}>
@@ -98,11 +111,11 @@ const CardEvent:  React.FunctionComponent<CardsComponentsProps> = ({ id, email_u
            
             <Text>
                 <Text style={{fontWeight:"bold"}}>Endereço: </Text>
-
                 <Text style={{ marginBottom: 10 }}>
                 {rua}, {numero}, {bairro}, {cidade}.
                 </Text>
             </Text>
+            <Distancia distancia={distancia}></Distancia>
             {edit? 
                 <View style={styles.containerButton}>
                     <TouchableOpacity onPress={()=>Excluir(id)} style={styles.button}>

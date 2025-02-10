@@ -27,6 +27,7 @@ interface Event {
   cep: string;
   referencia: string;
   email_user: string;
+  distancia: number;
 }
 
 export default function Home() {
@@ -39,10 +40,55 @@ export default function Home() {
   const { refreshHome, setRefreshState } = useRefreshPage();
   // console.log(refreshHome)
 
+  const [userCep, setUserCep] = useState('');
+
   const [events, setEvents] = useState<Event[]>([]);
   const [refreshing, setRefreshing] = useState(false)
   
   const [search, setSearch] = useState('');
+
+  async function obterCoordenadas(cep: string) {
+    try {
+        const url = `https://cep.awesomeapi.com.br/json/${cep}`;
+        const response = await axios.get(url);
+
+        if (!response.data || response.data.length === 0) {
+            throw new Error(`CEP ${cep} não encontrado`);
+        }
+
+        return {
+            latitude: parseFloat(response.data.lat),
+            longitude: parseFloat(response.data.lng)
+        };
+    } catch (error) {
+        console.error("Erro ao buscar coordenadas:", error);
+        return null;
+    }
+}
+
+function calcularDistancia(lat1:number, lon1:number, lat2:number, lon2:number) {
+  const R = 6371; 
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; 
+}
+
+async function CalcularDistanciaCeps(cep1:string, cep2:string) {
+    console.log(cep1)
+    console.log(cep2)
+    const coord1 = await obterCoordenadas(cep1);
+    const coord2 = await obterCoordenadas(cep2);
+    console.log(coord1)
+    console.log(coord2)
+    const distancia = calcularDistancia(coord1?.latitude ?? 0, coord1?.longitude?? 0, coord2?.latitude ?? 0, coord2?.longitude?? 0);
+    return distancia
+}
 
   const fetchData = async()=>{
     try{
@@ -54,18 +100,33 @@ export default function Home() {
           search: search
         }
       } );
-      const dados = response.data;
-      // console.log(response.data)
-      let vet: Event[] = [];
-      Object.keys(dados).forEach(e =>{
-        vet.push(dados[e])
-      })
-      setEvents(vet.reverse());
+
+      const responseUser = await axios.get("http://3.209.65.64:3001/usuariosInformacoes", {
+        params: {
+          email: user?.email
+        }, 
+        headers:{
+          Authorization: user?.token
+        }
+      });
+      const userCep = responseUser.data.cep;
+      setUserCep(userCep);
       
+      const dados = response.data;
+      const eventosComDistancia = await Promise.all(
+        Object.keys(dados).map(async (e) => {
+            const distancia = await CalcularDistanciaCeps(userCep, dados[e].cep);
+            return { ...dados[e], distancia }; 
+        })
+    );
+    const eventosOrdenados = eventosComDistancia.sort((a, b) => a.distancia - b.distancia);
+    setEvents(eventosOrdenados);
+    
     }catch (error) {
       console.error("Erro ao buscar os eventos:", error);
     }
   };
+
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -83,8 +144,8 @@ export default function Home() {
       fetchData(); 
       setRefreshState("refreshHome", false);
     }
-   
-  }, [refreshHome, search]);
+    
+  }, [refreshHome, search, userCep]);
 
   type ItemProps = {
     id: string
@@ -99,9 +160,10 @@ export default function Home() {
     bairro: string,
     cidade: string,
     cep: string,
-    referencia:string
+    referencia:string,
+    distancia: number
   }
-  const Item = ({ id, email_user, title, time, event_date, imgLink, rua, numero, bairro, cidade, cep, referencia, description}: ItemProps)=>(
+  const Item = ({ id, email_user, title, time, event_date, imgLink, rua, numero, bairro, cidade, cep, referencia, description, distancia}: ItemProps)=>(
     <CardEvent 
       id={id}
       email_user={email_user} 
@@ -116,6 +178,7 @@ export default function Home() {
       cidade={cidade}
       cep={cep}
       referencia={referencia}
+      distancia = {distancia}
     />
   );
 
@@ -140,6 +203,7 @@ export default function Home() {
           cep={item.cep}
           referencia={item.referencia}
           description={item.description}
+          distancia = {item.distancia}
         />
       )}
       keyExtractor={(item) => item.id}
