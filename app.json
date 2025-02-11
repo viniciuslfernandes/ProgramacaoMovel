@@ -4,7 +4,7 @@
     "slug": "Projeto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/IconApp.png",
+    "icon": "./assets/images/iconApp.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/iconAppFront.png",
+        "foregroundImage": "./assets/images/IconAppFront.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.viniciuslf.Projeto"
