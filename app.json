@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "Events",
-    "slug": "Events",
+    "slug": "Projeto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/iconApp.png",
+    "icon": "./assets/images/IconApp.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/IconAppFront.png",
+        "foregroundImage": "./assets/images/iconAppFront.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.viniciuslf.Projeto"
