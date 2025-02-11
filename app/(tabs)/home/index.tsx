@@ -9,9 +9,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/auth/authProvider";
 import { useRefreshPage } from "@/auth/refreshPages";
-import { router } from "expo-router";
-import { Card } from '@rneui/base';
-import { Avatar } from "react-native-elements";
+import * as Location from 'expo-location';
 
 interface Event {
   id: string,
@@ -47,6 +45,20 @@ export default function Home() {
   
   const [search, setSearch] = useState('');
 
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  async function getCurrentLocation() {
+      
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  }
+
   async function obterCoordenadas(cep: string) {
     try {
         const url = `https://cep.awesomeapi.com.br/json/${cep}`;
@@ -79,14 +91,11 @@ function calcularDistancia(lat1:number, lon1:number, lat2:number, lon2:number) {
   return R * c; 
 }
 
-async function CalcularDistanciaCeps(cep1:string, cep2:string) {
-    console.log(cep1)
-    console.log(cep2)
+async function CalcularDistanciaCeps(cep1:string) {
+
     const coord1 = await obterCoordenadas(cep1);
-    const coord2 = await obterCoordenadas(cep2);
-    console.log(coord1)
-    console.log(coord2)
-    const distancia = calcularDistancia(coord1?.latitude ?? 0, coord1?.longitude?? 0, coord2?.latitude ?? 0, coord2?.longitude?? 0);
+
+    const distancia = calcularDistancia(coord1?.latitude ?? 0, coord1?.longitude?? 0, location?.coords.latitude ?? 0, location?.coords.longitude?? 0);
     return distancia
 }
 
@@ -115,7 +124,7 @@ async function CalcularDistanciaCeps(cep1:string, cep2:string) {
       const dados = response.data;
       const eventosComDistancia = await Promise.all(
         Object.keys(dados).map(async (e) => {
-            const distancia = await CalcularDistanciaCeps(userCep, dados[e].cep);
+            const distancia = await CalcularDistanciaCeps(dados[e].cep);
             return { ...dados[e], distancia }; 
         })
     );
@@ -135,6 +144,7 @@ async function CalcularDistanciaCeps(cep1:string, cep2:string) {
   };
 
   useEffect(() => {
+    getCurrentLocation();
     if (user?.token) {
       fetchData(); 
     }
